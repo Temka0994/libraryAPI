@@ -28,8 +28,8 @@ class BookSchema(BaseModel):
         return value
 
     @field_validator("publish_date", mode='before')
-    def date_validation(cls, value):
-        value = datetime.datetime.strptime(value, "%Y-%m-%d").date()
+    def date_validation(cls, value:str):
+        value = datetime.date.fromisoformat(value)
         if value > datetime.date.today():
             raise ValueError("Invalid Date format. Check your format and date. Date must be in past.")
         return value
