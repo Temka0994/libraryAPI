@@ -1,3 +1,4 @@
+from enum import Enum
 from typing import Annotated, Optional
 from fastapi import FastAPI, Depends, Query
 from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine, AsyncSession
@@ -20,11 +21,17 @@ async def get_session():
 SessionDepend = Annotated[AsyncSession, Depends(get_session)]
 
 
+class BookSorting(str, Enum):
+    name = "name"
+    author = "author"
+    publish_date = "publish_date"
+
+
 @app.get('/books/')
 async def get_book(new_session: SessionDepend,
                    page: Optional[int] = Query(None, ge=1),
                    size: Optional[int] = Query(None, ge=1),
-                   sort_by: Optional[str] = None):
+                   sort_by: Optional[BookSorting] = None):
     query = select(BookModel).join(AuthorModel, BookModel.author_id == AuthorModel.author_id)
 
     sort_columns = {
@@ -47,3 +54,8 @@ async def get_book(new_session: SessionDepend,
         books = books[start_index:end_index]
 
     return books
+
+
+@app.post('/books/')
+async def post_book(new_session: SessionDepend):
+    pass
