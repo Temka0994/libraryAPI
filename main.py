@@ -1,10 +1,10 @@
 from enum import Enum
 from typing import Annotated, Optional
-from fastapi import FastAPI, Depends, Query
+from fastapi import FastAPI, Depends, Query, HTTPException
 from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine, AsyncSession
 from sqlalchemy import select
-
-from libraryModel import BookModel, AuthorModel
+from validationModels import BookSchema
+from libraryModel import BookModel, AuthorModel, PublisherModel
 
 DATABASE_URL = "postgresql+asyncpg://admin:root@localhost/library"
 app = FastAPI()
@@ -57,5 +57,33 @@ async def get_book(new_session: SessionDepend,
 
 
 @app.post('/books/')
-async def post_book(new_session: SessionDepend):
-    pass
+async def post_book(new_session: SessionDepend, data: BookSchema):
+    author_query = select(AuthorModel).where(
+        (AuthorModel.first_name == data.author.first_name) &
+        (AuthorModel.last_name == data.author.last_name))
+    author_result = await new_session.execute(author_query)
+    author = author_result.scalar_one_or_none()
+
+    if not author:
+        raise HTTPException(status_code=400, detail="Author does not exist.")
+
+    publisher_query = select(PublisherModel).where(
+        (PublisherModel.name == data.publisher.name))
+    publisher_result = await new_session.execute(publisher_query)
+    publisher = publisher_result.scalar_one_or_none()
+
+    if not publisher:
+        raise HTTPException(status_code=400, detail="Publisher does not exist.")
+
+    new_book = BookModel(
+        name=data.name,
+        author_id=author.author_id,
+        publisher_id=publisher.publisher_id,
+        publish_date=data.publish_date,
+        isbn=data.isbn
+    )
+
+    new_session.add(new_book)
+    await new_session.commit()
+
+    return {"result": "Book added successfully."}

@@ -38,6 +38,7 @@ class BookModel(Base):
     author_id: Mapped[int] = mapped_column(ForeignKey("authors.author_id", ondelete="CASCADE"))
     publisher_id: Mapped[int] = mapped_column(ForeignKey("publishers.publisher_id", ondelete="SET NULL"))
     publish_date: Mapped[date] = mapped_column(Date)
+    isbn: Mapped[str] = mapped_column(String(17))
 
 
 class BookGenreModel(Base):
