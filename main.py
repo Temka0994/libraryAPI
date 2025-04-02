@@ -3,7 +3,7 @@ from typing import Annotated, Optional
 from fastapi import FastAPI, Depends, Query, HTTPException
 from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine, AsyncSession
 from sqlalchemy import select
-from validationModels import BookSchema
+from validationModels import BookSchema, AuthorSchema
 from libraryModel import BookModel, AuthorModel, PublisherModel, HistoryModel
 
 DATABASE_URL = "postgresql+asyncpg://admin:root@localhost/library"
@@ -97,7 +97,8 @@ async def get_book_history(new_session: SessionDepend, id: int):
     history = result.scalars().all()
 
     if not history:
-        return {"message": "This book does not have a history."}
+        raise HTTPException(status_code=400, detail="This book does not have a history.")
+
     return history
 
 
@@ -108,5 +109,30 @@ async def get_author(new_session: SessionDepend, id: int):
     author = result.scalar_one_or_none()
 
     if not author:
-        return {"message": "There are no authors with this ID."}
+        raise HTTPException(status_code=400, detail="There are no authors with this ID.")
+
     return author
+
+
+@app.post('/authors')
+async def add_author(new_session: SessionDepend, data: AuthorSchema):
+
+    new_author = AuthorModel(
+        first_name=data.first_name,
+        last_name=data.last_name,
+        birth_date=data.birth_date
+    )
+
+    author_query = select(AuthorModel).where(
+        (AuthorModel.first_name == new_author.first_name) &
+        (AuthorModel.last_name == new_author.last_name))
+    author_result = await new_session.execute(author_query)
+    author = author_result.scalar_one_or_none()
+
+    if author:
+        raise HTTPException(status_code=400, detail="The author has not been added. He was added earlier.")
+
+    new_session.add(new_author)
+    await new_session.commit()
+
+    return {"message": "Author added successfully."}
