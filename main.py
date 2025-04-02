@@ -4,7 +4,7 @@ from fastapi import FastAPI, Depends, Query, HTTPException
 from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine, AsyncSession
 from sqlalchemy import select
 from validationModels import BookSchema
-from libraryModel import BookModel, AuthorModel, PublisherModel
+from libraryModel import BookModel, AuthorModel, PublisherModel, HistoryModel
 
 DATABASE_URL = "postgresql+asyncpg://admin:root@localhost/library"
 app = FastAPI()
@@ -86,4 +86,16 @@ async def post_book(new_session: SessionDepend, data: BookSchema):
     new_session.add(new_book)
     await new_session.commit()
 
-    return {"result": "Book added successfully."}
+    return {"message": "Book added successfully."}
+
+
+@app.get('/books/{id}/history')
+async def get_book_history(new_session: SessionDepend, id: int):
+    query = select(HistoryModel).join(BookModel, BookModel.book_id == HistoryModel.book_id).where(
+        BookModel.book_id == id)
+    result = await new_session.execute(query)
+    history = result.scalars().all()
+
+    if not history:
+        return {"message": "This book doesn't have a history."}
+    return history
