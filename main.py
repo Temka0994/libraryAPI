@@ -97,10 +97,16 @@ async def get_book_history(new_session: SessionDepend, id: int):
     history = result.scalars().all()
 
     if not history:
-        return {"message": "This book doesn't have a history."}
+        return {"message": "This book does not have a history."}
     return history
 
 
 @app.get('/authors/{id}/books')
-async def get_author(new_session: SessionDepend):
-    pass
+async def get_author(new_session: SessionDepend, id: int):
+    query = select(AuthorModel).where(AuthorModel.author_id == id)
+    result = await new_session.execute(query)
+    author = result.scalar_one_or_none()
+
+    if not author:
+        return {"message": "There are no authors with this ID."}
+    return author
