@@ -27,7 +27,7 @@ class BookSorting(str, Enum):
     publish_date = "publish_date"
 
 
-@app.get('/books/')
+@app.get('/books')
 async def get_book(new_session: SessionDepend,
                    page: Optional[int] = Query(None, ge=1),
                    size: Optional[int] = Query(None, ge=1),
@@ -56,7 +56,7 @@ async def get_book(new_session: SessionDepend,
     return books
 
 
-@app.post('/books/')
+@app.post('/books')
 async def post_book(new_session: SessionDepend, data: BookSchema):
     author_query = select(AuthorModel).where(
         (AuthorModel.first_name == data.author.first_name) &
@@ -99,3 +99,8 @@ async def get_book_history(new_session: SessionDepend, id: int):
     if not history:
         return {"message": "This book doesn't have a history."}
     return history
+
+
+@app.get('/authors/{id}/books')
+async def get_author(new_session: SessionDepend):
+    pass
