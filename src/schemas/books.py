@@ -1,37 +1,10 @@
 import datetime
 import re
-from typing import Optional
 
 from pydantic import BaseModel, Field, field_validator
 
-
-class AuthorSchema(BaseModel):
-    first_name: str
-    last_name: str
-    birth_date: Optional[datetime.date] = None
-
-    model_config = {
-        "json_schema_extra": {
-            "examples": [
-                {
-                    "first_name": "Іван",
-                    "last_name": "Франко",
-                    "birth_date": "1856-08-27"
-                }
-            ]
-        }
-    }
-
-    @field_validator("birth_date", mode='before')
-    def date_validation(cls, value: str):
-        value = datetime.date.fromisoformat(value)
-        if value > datetime.date.today():
-            raise ValueError("Invalid Date format. Check your format and date. Date must be in past.")
-        return value
-
-
-class PublisherSchema(BaseModel):
-    name: str
+from src.schemas.authors import AuthorSchema
+from src.schemas.publishers import PublisherSchema
 
 
 class BookSchema(BaseModel):
@@ -46,14 +19,14 @@ class BookSchema(BaseModel):
             "examples": [
                 {
                     "author": {
-                        "first_name": "Тарас",
-                        "last_name": "Шевченко"
+                        "first_name": "Taras",
+                        "last_name": "Shevchenko"
                     },
                     "isbn": "978-3-16-148410-0",
-                    "name": "Кобзар",
+                    "name": "Kobzar",
                     "publish_date": "2024-04-02",
                     "publisher": {
-                        "name": "Видавництво сонечко"
+                        "name": "Ranok"
                     }
                 }
             ]
