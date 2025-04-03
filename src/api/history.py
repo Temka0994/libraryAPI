@@ -26,19 +26,14 @@ async def get_book_history(new_session: SessionDepend, id: int):
     return history
 
 
-def count_operations(history: list):
-    borrowed_count = sum(1 for column in history if column.operation == BookState.BORROWED)
-    returned_count = sum(1 for column in history if column.operation == BookState.RETURNED)
-    return borrowed_count, returned_count
-
-
 @router.post('/borrow')
 async def borrow_book(new_session: SessionDepend, data: HistorySchema):
     query = select(HistoryModel).where(HistoryModel.user_id == data.user_id)
     history_result = await new_session.execute(query)
     history = history_result.scalars().all()
 
-    borrowed_count, returned_count = count_operations(history)
+    borrowed_count = sum(1 for column in history if column.operation == BookState.BORROWED)
+    returned_count = sum(1 for column in history if column.operation == BookState.RETURNED)
     books_on_hand = borrowed_count - returned_count
 
     if books_on_hand >= ALLOWED_BOOKS_COUNT:
@@ -54,13 +49,12 @@ async def borrow_book(new_session: SessionDepend, data: HistorySchema):
     new_operation = HistoryModel(
         book_id=data.book_id,
         user_id=data.user_id,
-        operation=BookState.BORROWED,
+        operation="borrowed",
         operation_date=datetime.date.today()
     )
 
     new_session.add(new_operation)
     storage.count -= 1
-
     await new_session.commit()
 
     return {"message": "Book borrowed successfully."}
@@ -76,7 +70,8 @@ async def return_book(new_session: SessionDepend, data: HistorySchema):
     storage_result = await new_session.execute(query_storage)
     storage = storage_result.scalar_one_or_none()
 
-    borrowed_count, returned_count = count_operations(history)
+    borrowed_count = sum(1 for column in history if column.operation == BookState.BORROWED)
+    returned_count = sum(1 for column in history if column.operation == BookState.RETURNED)
 
     if not borrowed_count > returned_count:
         raise HTTPException(status_code=400, detail="You can not perform this operation.")
@@ -84,7 +79,7 @@ async def return_book(new_session: SessionDepend, data: HistorySchema):
     new_operation = HistoryModel(
         book_id=data.book_id,
         user_id=data.user_id,
-        operation=BookState.RETURNED,
+        operation='returned',
         operation_date=datetime.date.today()
     )
 

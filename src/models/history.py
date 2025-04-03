@@ -1,8 +1,8 @@
 from sqlalchemy.orm import Mapped, mapped_column
 from sqlalchemy import String, Date, ForeignKey
 from datetime import date
-
 from src.models.dependencies import Base
+from src.models.users import UserModel
 
 
 class HistoryModel(Base):
