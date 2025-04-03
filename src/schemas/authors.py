@@ -7,7 +7,21 @@ from pydantic import BaseModel, field_validator
 class AuthorSchema(BaseModel):
     first_name: str
     last_name: str
-    birth_date: Optional[datetime.date] = None
+
+    model_config = {
+        "json_schema_extra": {
+            "examples": [
+                {
+                    "first_name": "Ivan",
+                    "last_name": "Franko",
+                }
+            ]
+        }
+    }
+
+
+class AuthorDateSchema(AuthorSchema):
+    birth_date: datetime.date
 
     model_config = {
         "json_schema_extra": {

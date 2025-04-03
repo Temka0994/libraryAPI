@@ -4,7 +4,7 @@ from sqlalchemy import select
 from src.database import SessionDepend
 from src.models.authors import AuthorModel
 from src.models.books import BookModel
-from src.schemas.authors import AuthorSchema
+from src.schemas.authors import AuthorSchema, AuthorDateSchema
 
 router = APIRouter()
 
@@ -22,7 +22,7 @@ async def get_author(new_session: SessionDepend, id: int):
 
 
 @router.post('/authors')
-async def add_author(new_session: SessionDepend, data: AuthorSchema):
+async def add_author(new_session: SessionDepend, data: AuthorDateSchema):
     new_author = AuthorModel(
         first_name=data.first_name,
         last_name=data.last_name,

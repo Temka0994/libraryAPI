@@ -17,7 +17,7 @@ async def get_genres(new_session: SessionDepend):
 
 
 @router.post('/genres')
-async def post_book(new_session: SessionDepend, data: GenreSchema):
+async def post_genre(new_session: SessionDepend, data: GenreSchema):
     query = select(GenreModel).where(GenreModel.name == data.name)
     result = await new_session.execute(query)
     genre = result.scalars().all()
