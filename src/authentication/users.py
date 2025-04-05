@@ -55,7 +55,7 @@ async def register_user(data: UserSchema,
 
     new_session.add(new_user)
     await new_session.commit()
-    return {"ok": "registered"}
+    return {"message": "Registered successfully."}
 
 
 async def get_user(new_session: SessionDepend,

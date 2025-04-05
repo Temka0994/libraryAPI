@@ -36,6 +36,9 @@ async def borrow_book(new_session: SessionDepend, data: HistorySchema):
     returned_count = sum(1 for column in history if column.operation == BookState.RETURNED)
     books_on_hand = borrowed_count - returned_count
 
+    if not history:
+        raise HTTPException(status_code=400, detail="You can not perform this operation.")
+
     if books_on_hand >= ALLOWED_BOOKS_COUNT:
         raise HTTPException(status_code=400, detail="You can not have more than three books on hand.")
 

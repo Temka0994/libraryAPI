@@ -35,9 +35,9 @@ class BookSchema(BaseModel):
 
     @field_validator("isbn", mode="before")
     def validate_isbn(cls, value: str):
-        pattern = r"^(?:\d{1,5}-\d{1,7}-\d{1,7}-[\dX]|\d{3}-\d{1,5}-\d{1,7}-\d{1,7}-[\dX])$"
+        pattern = r"^(?=[0-9]{13}$|(?=(?:[0-9]+[-\ ]){4})[-\ 0-9]{17}$)97[89][-\ ]?[0-9]{1,5}[-\ ]?[0-9]+[-\ ]?[0-9]+[-\ ]?[0-9]$"
         if not re.fullmatch(pattern, value):
-            raise ValueError("Invalid ISBN format. Expected ISBN-10 or ISBN-13 with dashes.")
+            raise ValueError("Invalid ISBN format. Expected ISBN-13 with dashes.")
         return value
 
     @field_validator("publish_date", mode='before')
