@@ -4,10 +4,10 @@ from sqlalchemy import select
 from src.models.genres import GenreModel
 from src.schemas.genres import GenreSchema
 
-router = APIRouter()
+router = APIRouter(tags=["Genres"])
 
 
-@router.get('/genres')
+@router.get('/genres/', summary="Gets a list of genres.")
 async def get_genres(new_session: SessionDepend):
     query = select(GenreModel)
     result = await new_session.execute(query)
@@ -16,7 +16,7 @@ async def get_genres(new_session: SessionDepend):
     return genres
 
 
-@router.post('/genres')
+@router.post('/genres/', summary="Adds a new genre.")
 async def post_genre(new_session: SessionDepend, data: GenreSchema):
     query = select(GenreModel).where(GenreModel.name == data.name)
     result = await new_session.execute(query)

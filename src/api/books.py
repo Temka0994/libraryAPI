@@ -10,10 +10,10 @@ from sqlalchemy import select
 from src.models.publishers import PublisherModel
 from src.schemas.books import BookSchema
 
-router = APIRouter()
+router = APIRouter(tags=["Books"])
 
 
-@router.get('/books')
+@router.get('/books/', summary="Gets a list of books.")
 async def get_book(new_session: SessionDepend,
                    page: Optional[int] = Query(None, ge=1),
                    size: Optional[int] = Query(None, ge=1),
@@ -42,7 +42,7 @@ async def get_book(new_session: SessionDepend,
     return books
 
 
-@router.post('/books')
+@router.post('/books/', summary="Adds a new book.")
 async def post_book(new_session: SessionDepend, data: BookSchema):
     author_query = select(AuthorModel).where(
         (AuthorModel.first_name == data.author.first_name) &

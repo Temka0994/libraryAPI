@@ -10,10 +10,10 @@ from src.models.history import HistoryModel
 from src.models.storage import StorageModel
 from src.schemas.history import HistorySchema
 
-router = APIRouter()
+router = APIRouter(tags=["History"])
 
 
-@router.get('/books/{id}/history')
+@router.get('/books/{id}/history/', summary="Gets a history of the book by the ID.")
 async def get_book_history(new_session: SessionDepend, id: int):
     query = select(HistoryModel).join(BookModel, BookModel.book_id == HistoryModel.book_id).where(
         BookModel.book_id == id)
@@ -26,7 +26,7 @@ async def get_book_history(new_session: SessionDepend, id: int):
     return history
 
 
-@router.post('/borrow')
+@router.post('/borrow/', summary="Borrows a book.")
 async def borrow_book(new_session: SessionDepend, data: HistorySchema):
     query = select(HistoryModel).where(HistoryModel.user_id == data.user_id)
     history_result = await new_session.execute(query)
@@ -60,7 +60,7 @@ async def borrow_book(new_session: SessionDepend, data: HistorySchema):
     return {"message": "Book borrowed successfully."}
 
 
-@router.post('/return')
+@router.post('/return/', summary="Returns a book.")
 async def return_book(new_session: SessionDepend, data: HistorySchema):
     query = select(HistoryModel).where((HistoryModel.user_id == data.user_id) & (HistoryModel.book_id == data.book_id))
     history_result = await new_session.execute(query)

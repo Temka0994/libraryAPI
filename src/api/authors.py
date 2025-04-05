@@ -6,10 +6,10 @@ from src.models.authors import AuthorModel
 from src.models.books import BookModel
 from src.schemas.authors import AuthorSchema, AuthorDateSchema
 
-router = APIRouter()
+router = APIRouter(tags=["Authors"])
 
 
-@router.get('/authors/{id}/books')
+@router.get('/authors/{id}/books/', summary="Gets an author by the ID.")
 async def get_author(new_session: SessionDepend, id: int):
     query = select(BookModel).where(BookModel.author_id == id)
     result = await new_session.execute(query)
@@ -21,7 +21,7 @@ async def get_author(new_session: SessionDepend, id: int):
     return author
 
 
-@router.post('/authors')
+@router.post('/authors/', summary="Adds a new author.")
 async def add_author(new_session: SessionDepend, data: AuthorDateSchema):
     new_author = AuthorModel(
         first_name=data.first_name,
