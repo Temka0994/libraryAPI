@@ -5,18 +5,18 @@ from sqlalchemy import select
 import jwt
 from src.authentication.hash_password import bcrypt, verify
 from src.database import SessionDepend
-from src.models.tokens import Token, TokenData
+from src.models.tokens import Token
 from src.models.users import UserModel
 from src.schemas.users import UserSchema, LoginSchema
 from fastapi.security import OAuth2PasswordBearer
 from datetime import timedelta, timezone, datetime
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+from src.properties import SECRET_KEY
 
 router = APIRouter(tags=["Authentication"])
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 http_bearer = HTTPBearer()
 ALGORITHM = 'HS256'
-SECRET_KEY = 'Insert your key here.'
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
 
@@ -119,5 +119,6 @@ def get_current_active_user(current_user: UserModel = Depends(get_current_user))
     return {
         "email": current_user.email,
         "first_name": current_user.first_name,
-        "last_name": current_user.last_name
+        "last_name": current_user.last_name,
+        "birth_date": current_user.birth_date
     }
