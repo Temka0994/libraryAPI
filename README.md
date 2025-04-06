@@ -16,4 +16,4 @@ After this navigate to the libraryAPI folder:
 ```bash
 cd libraryAPI
 ```
-You can use the ready-made code for creating and filling the database from the [schema.sql](./schema.sql) file or create your own. The attached file has a query for both creating tables and filling them.
+You can use the ready-made code for creating and filling the database from the [schema.sql](./src/schema.sql) file or create your own. The attached file has a query for both creating tables and filling them.
