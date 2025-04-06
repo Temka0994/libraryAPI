@@ -9,7 +9,7 @@ This project is a web service developed using FastAPI as a backend framework and
 - Pytest.
 # How to use it
 ### Clone repository
-Firstly, you need to clone the project. Do this using the following command in the console:
+Firstly, the project should be cloned using the following command in the console:
 ```bash
 git clone https://github.com/Temka0994/libraryAPI.git
 ```
@@ -19,17 +19,17 @@ cd libraryAPI
 ```
 
 ### Requirements
-Also, you need to download all the requirements. You can do this with the following command:
+Additionally, all the requirements should be downloaded using the following command:
 ```bash
 pip install -r requirements.txt
 ```
 
 ### Database
-You can use the ready-made code for creating and filling the database from the [schema.sql](./src/schema.sql) file or create your own. The attached file has a query for both creating tables and filling them. Your database will look like the following:
+The ready-made code for creating and populating the database from the [schema.sql](./src/schema.sql) file can be used, or a custom script may be created. The attached file contains queries for both table creation and data insertion. The database will appear as follows:
 
 ![image](https://github.com/user-attachments/assets/6c327500-4c7a-43c0-8d2d-5bb9c92bf420)
 
-The next step is to change the database path. Go to the [database.py](./src/database.py) file and put your path in the `DATABASE_URL` field.
+The next step is to change the database path. This should be done by opening the [database.py](./src/database.py) file and inserting the desired path into the `DATABASE_URL` field.
 
 ### Secret token
 Of course, in order to take advantage of the JWT Token, you need to enter your key, which will be used to validate the token. You must enter it in the file [properties.py](./src/properties.py).
